@@ -1,0 +1,12 @@
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv/
+app_output.log
+instance/
+meraki_vouchers.db
+.pytest_cache/

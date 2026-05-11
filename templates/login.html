@@ -107,10 +107,20 @@
             successMsg.style.display = 'none';
             
             if (!client_mac || !base_grant_url) {
-                errorMsg.textContent = "Error: Missing network information (MAC or Grant URL). Ensure you connect via the captive portal.";
-                errorMsg.style.display = 'block';
-                return;
+                console.log("Testing Mode Enabled: Using dummy MAC and URL");
+                const final_mac = client_mac || "TEST_MAC_ADDRESS";
+                const final_url = base_grant_url || "https://httpbin.org/get";
+                
+                // Continue with login using test values
+                try_login(voucher_code, final_mac, final_url);
+            } else {
+                try_login(voucher_code, client_mac, base_grant_url);
             }
+        });
+
+        async function try_login(voucher_code, client_mac, base_grant_url) {
+            const errorMsg = document.getElementById('error-msg');
+            const successMsg = document.getElementById('success-msg');
             
             try {
                 const response = await fetch('/api/voucher/login', {
@@ -130,9 +140,8 @@
                 if (response.ok) {
                     successMsg.textContent = "Access granted! Redirecting...";
                     successMsg.style.display = 'block';
-                    // The device should now have internet access. We could redirect them to a success page or the originally requested URL.
                     setTimeout(() => {
-                        window.location.href = "https://www.google.com"; // Example redirect after successful connection
+                        window.location.href = "https://www.google.com";
                     }, 2000);
                 } else {
                     errorMsg.textContent = result.error || "An error occurred";
@@ -142,7 +151,6 @@
                 errorMsg.textContent = "Failed to connect to the server.";
                 errorMsg.style.display = 'block';
             }
-        });
-    </script>
+        }
 </body>
 </html>

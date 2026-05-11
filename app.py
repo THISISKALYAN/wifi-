@@ -3,8 +3,15 @@ from datetime import datetime
 from models import db, Voucher, VoucherDevice, LoginLog, SystemConfig
 import requests
 
+import os
+
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///meraki_vouchers.db'
+# Use DATABASE_URL from environment if available (for Render/Railway), else local SQLite
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///meraki_vouchers.db')
+# Workaround for Render's postgres:// vs postgresql:// protocol requirement
+if app.config['SQLALCHEMY_DATABASE_URI'].startswith("postgres://"):
+    app.config['SQLALCHEMY_DATABASE_URI'] = app.config['SQLALCHEMY_DATABASE_URI'].replace("postgres://", "postgresql://", 1)
+
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db.init_app(app)
 

@@ -178,7 +178,13 @@ def voucher_login():
     
     return jsonify({"message": "Access granted"}), 200
 
+# Ensure tables are created (Safe to run multiple times)
+with app.app_context():
+    db.create_all()
+
+@app.route('/health')
+def health_check():
+    return "OK", 200
+
 if __name__ == '__main__':
-    with app.app_context():
-        db.create_all()
     app.run(debug=True, host='0.0.0.0')
